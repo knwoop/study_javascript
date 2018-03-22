@@ -1,10 +1,17 @@
+/**
+ * model
+ * ・view から値を受け取ってその値に対してバリデーションを実行する
+ * ・バリデーションの結果に応じてイベントを通知する
+ */
 function AppModel(attrs) {
   this.val = "";
+  // validation pattern
   this.attrs = {
     required: attrs.required || false,
     maxlength: attrs.maxlength || 8,
     minlength: attrs.minlength || 4
   };
+  // オブサーバー機能
   this.listeners = {
     valid: [],
     invalid: []
@@ -23,22 +30,26 @@ AppModel.prototype.validate = function() {
 
   for (var key in this.attrs) {
     val = this.attrs[key];
+    // バリデーション関数を呼び出す
     if (val && !this[key](val)) this.errors.push(key);
   }
 
   this.trigger(!this.errors.length ? "valid" : "invalid");
 };
 
+// イベントを通知したい関数を追加
 AppModel.prototype.on = function(event, func) {
   this.listeners[event].push(func);
 };
 
+// オブサーバーのリスト全体を反復処理し、実行する
 AppModel.prototype.trigger = function(event) {
   $.each(this.listeners[event], function() {
     this();
   });
 };
 
+// validationを実装
 AppModel.prototype.required = function() {
   return this.val !== "";
 };
@@ -51,6 +62,7 @@ AppModel.prototype.minlength = function(num) {
   return num <= this.val.length;
 };
 
+// view
 function AppView(el) {
   this.initialize(el);
   this.handleEvents();
@@ -91,11 +103,13 @@ AppView.prototype.onKeyup = function(e) {
   this.model.set($target.val());
 };
 
+// エラーを非表示にする
 AppView.prototype.onValid = function() {
   this.$el.removeClass("error");
   this.$list.hide();
 };
 
+// エラーを表示する
 AppView.prototype.onInvalid = function() {
   var self = this;
   this.$el.addClass("error");
