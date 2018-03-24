@@ -6,24 +6,17 @@ Modal.prototype.initialize = function(el) {
   this.$el        = el;
   this.$container = $("#modal");
   this.$contents  = $("#modal-contents");
-  this.$close     = $("#modal-close");
-  this.$next      = $("#modal-next");
-  this.$prev      = $("#modal-prev");
   this.$overlay   = $("#modal-overlay");
+  // 親要素を定義 - delegate対応
+  this.$parents   = this.$el.parents("ul");
   this.$window    = $(window);
-  this.index      = 0;
   this.handleEvents();
 };
 
 Modal.prototype.handleEvents = function() {
   var self = this;
-  this.$el.on("click", function(e) {
+  this.$parents.on("click", "a", function(e) {
     self.show(e);
-    return false;
-  });
-
-  this.$close.on("click", function(e) {
-    self.hide(e);
     return false;
   });
 
@@ -32,13 +25,16 @@ Modal.prototype.handleEvents = function() {
     return false;
   });
 
-  this.$next.on("click", function(e) {
+  this.$container.on("click", "#modal-next", function(e)　{
     self.next(e);
     return false;
   });
-
-  this.$prev.on("click", function(e) {
+  this.$container.on("click", "#modal-prev", function(e) {
     self.prev(e);
+    return false;
+  });
+  this.$container.on("click", "#modal-close", function(e) {
+    self.hide(e);
     return false;
   });
 
@@ -102,3 +98,14 @@ Modal.prototype.resize = function() {
 };
 
 var modal = new Modal($("#modal-thumb a"));
+
+$("#more-btn").on("click", function() {
+  var html = '<li>\
+    <a href="images/photo-04.JPG" data-index="3">\
+      <img alt="" src="images/photo-04.JPG" width="160" class="img-thumbnail">\
+    </a>\
+  </li>';
+  $(html).appendTo($("#modal-thumb")).hide().fadeIn();
+  $(this).fadeOut();
+  modal.$el = $("#modal-thumb a");
+});
