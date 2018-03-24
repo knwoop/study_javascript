@@ -41,6 +41,10 @@ Modal.prototype.handleEvents = function() {
     self.prev(e);
     return false;
   });
+
+  this.$window.on("resize", function() {
+    self.resize();
+  });
 };
 
 // モーダルを表示させるためのshowメソッドを実装する
@@ -85,6 +89,15 @@ Modal.prototype.next = function() {
 
 Modal.prototype.prev = function() {
   this.slide(this.countChange(-1));
+};
+
+Modal.prototype.resize = function() {
+  var w = this.$window.width();
+  if (w < 640) {
+    this.$container.css({"width" : "320", "height" : "213"});
+  } else {
+    this.$container.css({"width" : "750", "height": "500"});
+  }
 };
 
 var modal = new Modal($("#modal-thumb a"));
