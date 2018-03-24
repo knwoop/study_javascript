@@ -42,7 +42,8 @@ Modal.prototype.handleEvents = function() {
     return false;
   });
 
-  this.$window.on("resize", function() {
+  // ロードとリサイズのとき
+  this.$window.on("load resize", function() {
     self.resize();
   });
 };
